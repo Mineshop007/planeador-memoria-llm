@@ -1,0 +1,3 @@
+const assert=require('node:assert/strict');const {estimate}=require('./calculator');
+const p={parameters:8,bits:4,overhead:15,layers:32,kvHeads:8,headDim:128,context:8192,parallel:1,kvBytes:2,reserve:2};
+const r=estimate(p);assert.equal(r.kv,1);assert.equal(r.weights,4000000000/2**30);assert.equal(estimate({...p,context:16384}).kv,2);assert.equal(estimate({...p,parallel:4}).kv,4);assert.equal(estimate({...p,kvBytes:1}).kv,.5);assert.equal(estimate({...p,bits:8}).weights,r.weights*2);assert.equal(estimate({...p,overhead:0,reserve:0}).total,r.weights+1);assert.throws(()=>estimate({...p,context:NaN}));assert.throws(()=>estimate({...p,parallel:0}));console.log('9 meaningful memory-calculation checks passed');
